@@ -1,0 +1,92 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/18/2024 10:22:52 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP2 EXO 2
+00000000                             3  * Written by :  ERRARD - DACCACHE
+00000000                             4  * Date       : 13/03/24
+00000000                             5  * Description: EXO 2
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                  ; first instruction of program
+00001000  =0000000D                  9  CR EQU $0D              *retour chariot (carriage return)
+00001000  =0000000A                 10  LF EQU $0A              *Saut de ligne (Line Feed)
+00001000                            11  * Put program code here
+00001000  43F9 0000109C             12          LEA MESSAGE0, A1    *chargement de message dans l'adresse de registre A1
+00001006  103C 000E                 13          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000100A  4E4F                      14          TRAP #15            *Affiche le message  
+0000100C                            15  *-------------------------------------------------------        
+0000100C  43F9 000010B5             16          LEA MESSAGE1, A1    *chargement de message dans l'adresse de registre A1
+00001012  103C 000E                 17          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+00001016  4E4F                      18          TRAP #15            *affichage de MESSAGE1
+00001018  103C 0002                 19          MOVE.B #2,D0        *on met 2 dans D0
+0000101C  4E4F                      20          TRAP #15            *on demande a l'utilisateur d'entrer une donner sur le clavier
+0000101E  2409                      21          MOVE.L A1,D2        *on met la donne sauvegarder dans A1 dans le registre de donne D2
+00001020  43F9 000010CA             22          LEA MESSAGE2, A1    *chargement de message dans l'adresse de registre A1
+00001026  103C 000E                 23          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000102A  4E4F                      24          TRAP #15            *on affiche MESSAGE2
+0000102C  103C 0002                 25          MOVE.B #2,D0        *on met 2 dans D0
+00001030  4E4F                      26          TRAP #15            *on demande a l'utilisateur d'entrer une donner sur le clavier
+00001032  2609                      27          MOVE.L A1,D3        *on met la donne sauvegarder dans A1 dans le registre de donne D3
+00001034  43F9 000010E2             28          LEA MESSAGE3, A1    *chargement de message dans l'adresse de registre A1
+0000103A  103C 000E                 29          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000103E  4E4F                      30          TRAP #15            *on affiche MESSAGE3
+00001040  103C 0004                 31          MOVE.B #4,D0        *on met 4 dans D0
+00001044  4E4F                      32          TRAP #15            *on demande a l'utilisateur d'entrer un nombre sur le clavier
+00001046  2801                      33          MOVE.L D1,D4        *on met la donne sauvegarder dans D1 dans le registre de donne D4
+00001048  43F9 00001106             34          LEA MESSAGE4, A1    *chargement de message dans l'adresse de registre A1
+0000104E  103C 000E                 35          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+00001052  4E4F                      36          TRAP #15            *on affiche MESSAGE4
+00001054  2242                      37          MOVE.L D2,A1        *on met la donné qui est dans D2 dans A1
+00001056  103C 000E                 38          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000105A  4E4F                      39          TRAP #15            *on afficher ce qui dans A1 (le Nom)
+0000105C  43F9 00001125             40          LEA MESSAGE7, A1    *chargement de message dans l'adresse de registre A1
+00001062  103C 000E                 41          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+00001066  4E4F                      42          TRAP #15            *on affiche MESSAGE7
+00001068  2243                      43          MOVE.L D3,A1        *on met la donné qui est dans D3 dans A1
+0000106A  103C 000E                 44          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000106E  4E4F                      45          TRAP #15            *on afficher le contenu de A1 (le Prenom)
+00001070  43F9 00001111             46          LEA MESSAGE5, A1    *chargement de message dans l'adresse de registre A1
+00001076  103C 000E                 47          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000107A  4E4F                      48          TRAP #15            *on affiche MESSAGE5
+0000107C  2A3C 000007E8             49          MOVE.L #2024,D5     *on met 2024 dans D5
+00001082  9A84                      50          SUB.L D4,D5         *on soustrait D5 (2024) par D4 (la date de naissance donner par l'utilisateur)
+00001084  2205                      51          MOVE.L D5,D1        *on met le contenu de D5 dans D1
+00001086  103C 0003                 52          MOVE.B #3,D0        *Mettre 14 dans le registre D0
+0000108A  4E4F                      53          TRAP #15            *on afficher le contenu de D1 (le resultat de la soustraction qui est l'age)
+0000108C  43F9 0000111F             54          LEA MESSAGE6, A1    *chargement de message dans l'adresse de registre A1
+00001092  103C 000E                 55          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+00001096  4E4F                      56          TRAP #15            *on affiche MESSAGE6
+00001098  FFFF FFFF                 57      SIMHALT             ; halt simulator
+0000109C                            58  
+0000109C                            59  * Put variables and constants here
+0000109C= 2D 2D 2D 2D 2D 20 ...     60  MESSAGE0  DC.B '----- TP 2 EXO 2 -----',0,CR,LF
+000010B5= 0D 0A 45 6E 74 72 ...     61  MESSAGE1 DC.B  CR,LF,'Entrer votre nom: ',0
+000010CA= 0D 0A 45 6E 74 72 ...     62  MESSAGE2 DC.B  CR,LF,'Entrer votre prenom: ',0
+000010E2= 0D 0A 45 6E 74 72 ...     63  MESSAGE3 DC.B  CR,LF,'Entrer votre annee de naissance: ',0
+00001106= 0D 0A 42 6F 6E 6A ...     64  MESSAGE4 DC.B  CR,LF,'Bonjour ',0
+00001111= 2E 20 56 6F 75 73 ...     65  MESSAGE5 DC.B  '. Vous avez: ',0
+0000111F= 20 61 6E 73 21 00         66  MESSAGE6 DC.B  ' ans!',0
+00001125= 20 00                     67  MESSAGE7  DC.B ' ',0
+00001127                            68  
+00001127                            69      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+CR                  D
+LF                  A
+MESSAGE0            109C
+MESSAGE1            10B5
+MESSAGE2            10CA
+MESSAGE3            10E2
+MESSAGE4            1106
+MESSAGE5            1111
+MESSAGE6            111F
+MESSAGE7            1125
+START               1000

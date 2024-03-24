@@ -1,0 +1,72 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/23/2024 8:13:46 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP3-EXO2.1
+00000000                             3  * Written by :  ERRARD-DACCACHE
+00000000                             4  * Date       :  20/03/2024
+00000000                             5  * Description:  EXO2.1
+00000000                             6  *-----------------------------------------------------------
+00000000                             7      *include c:\easy68K\equvia.X68
+00000000  =000F0441                  8  via1 equ $f0441
+00000000  =00000002                  9  ora equ $2
+00000000  =00000002                 10  ira equ $2
+00000000  =00000006                 11  ddra equ $6
+00000000                            12  
+00001000                            13      ORG    $1000
+00001000                            14    
+00001000                            15  START:                  ; first instruction of program
+00001000                            16  
+00001000                            17  * Put program code here
+00001000                            18  
+00001000  41F9 000F0441             19          lea via1,A0
+00001006  117C 00FF 0006            20          move.b #$FF,ddra(A0)
+0000100C  143C 0001                 21          move.b  #$01, D2 
+00001010  1142 0002                 22          move.b D2, ORA(A0)
+00001014  4241                      23          clr D1
+00001016                            24      
+00001016  E71A                      25  decale  rol.b #3, D2        *rol #3 au lieu de 1 pour la suite (1,4,7,2,5,0,3,6,1,...)
+00001018  6100 0008                 26          bsr affiche
+0000101C  60F8                      27          bra decale
+0000101E  6000 0018                 28          bra stop
+00001022                            29          
+00001022  1142 0002                 30  affiche move.b D2, ORA(A0) 
+00001026                            31         
+00001026  263C 000002FF             32  Tempo   move.l #$2FF, D3
+0000102C                            33        
+0000102C  2803                      34  cycle1  move.l D3,D4  
+0000102E  51CC FFFE                 35  cycle2  dbf D4, cycle2
+00001032  51CB FFF8                 36          dbf D3, cycle1
+00001036  4E75                      37          rts
+00001038                            38  
+00001038                            39  
+00001038                            40          
+00001038  303C 0009                 41  stop    move #9,D0
+0000103C  4E4F                      42          trap #15
+0000103E                            43      
+0000103E                            44      
+0000103E  FFFF FFFF                 45      SIMHALT             ; halt simulator
+00001042                            46  
+00001042                            47  * Put variables and constants here
+00001042                            48  
+00001042                            49      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AFFICHE             1022
+CYCLE1              102C
+CYCLE2              102E
+DDRA                6
+DECALE              1016
+IRA                 2
+ORA                 2
+START               1000
+STOP                1038
+TEMPO               1026
+VIA1                F0441

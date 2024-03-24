@@ -1,0 +1,121 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/24/2024 2:24:06 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP3-EXO 3.3
+00000000                             3  * Written by :  ERRARD-DACCACHE
+00000000                             4  * Date       :  20/03/2024
+00000000                             5  * Description:  EXO 3.3
+00000000                             6  *-----------------------------------------------------------
+00000000                             7      *include c:\easy68K\equvia.X68
+00000000  =000F0441                  8  via1 equ $f0441                     *initialisaton des equivalences
+00000000  =00000002                  9  ora equ $2                          *output port A
+00000000  =00000002                 10  ira equ $2                          *input port A
+00000000  =00000018                 11  rpc equ $18                         *registre de controle des peripheriques
+00000000  =0000001A                 12  ifr equ $1A                         *registre d'interruption valide
+00000000  =0000001C                 13  ier equ $1C                         *registre d'indicateur d'interruption
+00000000  =00000014                 14  sr equ $14                          *registre d'etat
+00000000  =00000008                 15  T1LR equ $8                         *registre de temporisation
+00000000  =00000016                 16  acr equ $16                         *registre de controle auxiliaire
+00000000  =00000006                 17  ddra equ $6                         *status des ports A0 a A7 (entree ou sortie)
+00000000                            18  
+00001000                            19      ORG    $1000
+00001000                            20    
+00001000                            21  START:                  ; first instruction of program
+00001000                            22  
+00001000                            23  * Put program code here
+00001000                            24  
+00001000  41F9 000F0441             25          lea via1,A0                 *chargement de via1 dans l'adresse de registre A0
+00001006  117C 0001 0018            26          move.b #$1,rpc(A0)          *on met a 1 le bit numero 0 de rpc qui correspond a un front montant sur CA1
+0000100C  117C 0082 001C            27          move.b #%10000010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruptions sur CA1
+00001012  21FC 0000107A 0070        28          move.l #inter1,$70          *on choisit l'adresse d'interuption (niveau 4)
+0000101A  46FC 2300                 29          move.w #$2300,sr            *on met les 8 bits de gauche de SR a 0010 0011, pour changer le masque d'interruption a 3 et authorisé mode superviseur
+0000101E                            30          
+0000101E  203C 00013880             31          move.l #80000,D0            *on met 80000 dans D0 pour une precision de 100ms
+00001024  E158                      32          rol.w #8,D0                 *on fait un deplacement de 8 bit vers la gauche
+00001026  0188 0008                 33          movep.w D0,T1LR(A0)         *on charge D0 dans T1LR
+0000102A  117C 0080 0016            34          move.b #$80,acr(A0)         *on met #$40 (0100 0000) dans ACR pour metre T1 en mode libre
+00001030  117C 00C0 001C            35          move.b #%11000000,ier(A0)   *on met ier a 1000 0010, pour authorise les interruptions sur T1
+00001036  21FC 0000109A 0074        36          move.l #inter2,$74          *on choisit l'adresse d'interuption (niveau 4)
+0000103E  46FC 2300                 37          move.w #$2300,sr            *on met les 8 bits de gauche de SR a 0010 0011, pour changer le masque d'interruption a 3 et authorisé mode superviseur
+00001042                            38          
+00001042                            39          
+00001042  117C 00FF 0006            40          move.b #$FF,ddra(A0)        *on met les pates de A en mode Lecture (0F0443 pour l'affichage dans hardware)
+00001048  143C 0003                 41          move.b  #$03, D2            *on emet #$03 dans D2
+0000104C  1142 0002                 42          move.b D2, ORA(A0)          *on charge D2 dans ORA
+00001050  4241                      43          clr D1                      *on efface le contenu de D1
+00001052  4245                      44          clr D5
+00001054                            45          
+00001054                            46      
+00001054  B27C 0001                 47  boucle  cmp #1,D1                   *on compare D1 a 1
+00001058  6700 000A                 48          beq droite                  *si D1=1 on passe a programme de l'etiquette droite
+0000105C  E51A                      49          rol.b #2, D2                *sinon on on fait un decalage de 2 bit vers la gauche
+0000105E  6100 000C                 50  gauche  bsr affiche                 *on passe ou sous programme affiche
+00001062  60F0                      51          bra boucle                  *on relance le programme d'etiquette boucle
+00001064                            52          
+00001064  E41A                      53  droite  ror.b #2,D2                 *on fait un deplacement de 2 bit vers la droite
+00001066  6100 0004                 54          bsr affiche                 *on passe ou sous programme affiche
+0000106A  60E8                      55          bra boucle                  *on relance le programme d'etiquette boucle
+0000106C  1142 0002                 56  affiche move.b D2, ORA(A0)          *on recharge D2 dans ORA
+00001070  BA7C 000A                 57  tempo   cmp #10,D5                  *pour que la tempo se declanche il faut activé le automatic disable 5
+00001074  6DFA                      58          blt tempo                   *verification que l'interruption timer a bien fonctionner
+00001076  4245                      59          clr D5                      *on efface le contenu de D5 pour repeter l'interruption timer
+00001078  4E75                      60          rts                         *on retourne au programme bra boucle (ligne 38 ou ligne 42) cela depand de D1
+0000107A                            61  *----(programme d'interruption)-------------------------------        
+0000107A  B27C 0000                 62  inter1  cmp #0,D1                   *on compare D1 a 0 losqu'on a un front montant sur CA1 (declanchement de l'interruption 4 sur le hardware)
+0000107E  6700 0006                 63          beq yes                     *si D1 = 0 on passe a l'etiquette yes
+00001082  6600 0008                 64          bne no                      *sinon on passe a l'etiquette no
+00001086  5241                      65  yes     add #1,D1                   *si D1 = 0 on ajoute 1 a D1
+00001088  6000 0008                 66          bra out                     *on passe a l'etiquette out
+0000108C  5341                      67  no      sub #1,D1                   *si D1 n'est pas egale a 0 on soustrait 1 a D1 pour qu'il redeviet egale a 0
+0000108E  6000 0002                 68          bra out                     *on passe a l'etiquette out
+00001092  08E8 0001 001A            69  out     bset #1,ifr(A0)             *apres avoir modifier la valeur de D1 on change le bit numeo 1 de IFR qui correspond a CA1 pour arreter l'interruption
+00001098  4E73                      70          rte                         *on sort de l'interruption et on reprend le code d'ou on avait arreter
+0000109A                            71          
+0000109A  5245                      72  inter2  add #1, D5                  *on ajoute 1 a D5
+0000109C  BA7C 000A                 73          cmp #10,D5                  *on compare D5 a 10 (on a besoin de 10 interruptions de 100ms pour avoir une tempo de 1s)
+000010A0  6DF8                      74          blt inter2                  *si D5 plus petit que 10 on remonte a inter2
+000010A2  08E8 0006 001A            75          bset #6,ifr(A0)             *apres avoir fini la tempo on sort de l'interruption on mettant le bit 6 a 1 de IFR
+000010A8  4E73                      76          rte                         *on remonte au programme
+000010AA                            77              
+000010AA                            78          
+000010AA  303C 0009                 79  stop    move #9,D0
+000010AE  4E4F                      80          trap #15
+000010B0                            81      
+000010B0                            82      
+000010B0  FFFF FFFF                 83      SIMHALT             ; halt simulator
+000010B4                            84  
+000010B4                            85  * Put variables and constants here
+000010B4                            86  
+000010B4                            87      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+ACR                 16
+AFFICHE             106C
+BOUCLE              1054
+DDRA                6
+DROITE              1064
+GAUCHE              105E
+IER                 1C
+IFR                 1A
+INTER1              107A
+INTER2              109A
+IRA                 2
+NO                  108C
+ORA                 2
+OUT                 1092
+RPC                 18
+SR                  14
+START               1000
+STOP                10AA
+T1LR                8
+TEMPO               1070
+VIA1                F0441
+YES                 1086

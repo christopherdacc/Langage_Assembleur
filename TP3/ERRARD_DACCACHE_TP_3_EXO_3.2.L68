@@ -1,0 +1,104 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/24/2024 12:57:04 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP3-EXO 3.2
+00000000                             3  * Written by :  ERRARD-DACCACHE
+00000000                             4  * Date       :  20/03/2024
+00000000                             5  * Description:  EXO 3.2
+00000000                             6  *-----------------------------------------------------------
+00000000                             7      *include c:\easy68K\equvia.X68
+00000000  =000F0441                  8  via1 equ $f0441
+00000000  =00000002                  9  ora equ $2
+00000000  =00000002                 10  ira equ $2
+00000000  =00000018                 11  rpc equ $18
+00000000  =0000001A                 12  ifr equ $1A
+00000000  =0000001C                 13  ier equ $1C
+00000000  =00000014                 14  sr equ $14
+00000000  =00000006                 15  ddra equ $6
+00000000                            16  
+00001000                            17      ORG    $1000
+00001000                            18    
+00001000                            19  START:                  ; first instruction of program
+00001000                            20  
+00001000                            21  * Put program code here
+00001000                            22  
+00001000  41F9 000F0441             23          lea via1,A0
+00001006  21FC 0000105C 0070        24          move.l #inter,$70
+0000100E  117C 0001 0018            25          move.b #$1,rpc(A0)
+00001014  117C 0082 001C            26          move.b #%10000010,ier(A0)
+0000101A  46FC 2300                 27          move.w #$2300,sr
+0000101E  117C 00FF 0006            28          move.b #$FF,ddra(A0)
+00001024  143C 0003                 29          move.b  #$03, D2 
+00001028  1142 0002                 30          move.b D2, ORA(A0)
+0000102C  4241                      31          clr D1
+0000102E                            32          
+0000102E                            33      
+0000102E  B27C 0001                 34  boucle  cmp #1,D1
+00001032  6700 000A                 35          beq droite
+00001036  E51A                      36          rol.b #2, D2
+00001038  6100 000C                 37  gauche  bsr affiche
+0000103C  60F0                      38          bra boucle
+0000103E                            39          
+0000103E  E41A                      40  droite  ror.b #2,D2 
+00001040  6100 0004                 41          bsr affiche
+00001044  60E8                      42          bra boucle       
+00001046  1142 0002                 43  affiche move.b D2, ORA(A0) 
+0000104A                            44         
+0000104A  263C 000002FF             45  Tempo   move.l #$2FF, D3
+00001050                            46        
+00001050  2803                      47  cycle1  move.l D3,D4  
+00001052  51CC FFFE                 48  cycle2  dbf D4, cycle2
+00001056  51CB FFF8                 49          dbf D3, cycle1
+0000105A  4E75                      50          rts
+0000105C                            51  
+0000105C  B27C 0000                 52  inter   cmp #0,D1
+00001060  6700 0006                 53          beq yes
+00001064  6600 0008                 54          bne no
+00001068  5241                      55  yes     add #1,D1
+0000106A  6000 0008                 56          bra out
+0000106E  5341                      57  no      sub #1,D1
+00001070  6000 0002                 58          bra out
+00001074  08E8 0001 001A            59  out     bset #1,ifr(A0)
+0000107A  4E73                      60          rte 
+0000107C                            61  
+0000107C                            62          
+0000107C  303C 0009                 63  stop    move #9,D0
+00001080  4E4F                      64          trap #15
+00001082                            65      
+00001082                            66      
+00001082  FFFF FFFF                 67      SIMHALT             ; halt simulator
+00001086                            68  
+00001086                            69  * Put variables and constants here
+00001086                            70  
+00001086                            71      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AFFICHE             1046
+BOUCLE              102E
+CYCLE1              1050
+CYCLE2              1052
+DDRA                6
+DROITE              103E
+GAUCHE              1038
+IER                 1C
+IFR                 1A
+INTER               105C
+IRA                 2
+NO                  106E
+ORA                 2
+OUT                 1074
+RPC                 18
+SR                  14
+START               1000
+STOP                107C
+TEMPO               104A
+VIA1                F0441
+YES                 1068

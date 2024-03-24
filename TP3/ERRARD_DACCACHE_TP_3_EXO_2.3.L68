@@ -1,0 +1,101 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/23/2024 8:57:59 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP3-EXO 2.3
+00000000                             3  * Written by :  ERRARD-DACCACHE
+00000000                             4  * Date       :  20/03/2024
+00000000                             5  * Description:  EXO 2.3
+00000000                             6  *-----------------------------------------------------------
+00000000                             7      *include c:\easy68K\equvia.X68
+00000000  =000F0441                  8  via1 equ $f0441                 *initialisaton des equivalences
+00000000  =00000000                  9  orb equ $0                      *output port B
+00000000  =00000000                 10  irb equ $0                      *input port B
+00000000  =00000002                 11  ora equ $2                      *output port A
+00000000  =00000002                 12  ira equ $2                      *input port A
+00000000  =00000006                 13  ddra equ $6                     *status des ports A0 a A7 (entree ou sortie)
+00000000  =00000004                 14  ddrb equ $4                     *status des ports B0 a B7 (entree ou sortie)
+00000000                            15  
+00001000                            16      ORG    $1000
+00001000                            17    
+00001000                            18  START:                  ; first instruction of program
+00001000                            19  
+00001000                            20  * Put program code here
+00001000                            21  
+00001000  41F9 000F0441             22          lea via1,A0             *chargement de via1 dans l'adresse de registre A0
+00001006  117C 00FF 0006            23          move.b #$FF,ddra(A0)    *on met les pates de A en mode Lecture (0F0443 pour l'affichage dans hardware)
+0000100C  117C 00FF 0004            24          move.b #$FF,ddrb(A0)    *on met les ports de B en mode Lecture (0F0441 pour les bouton dans hardwar)
+00001012  4241                      25          clr D1                  *on efface le contenu de D1
+00001014  4242                      26          clr D2                  *on efface le contenu de D2
+00001016  4246                      27          clr D6                  *on efface le contenu de D6
+00001018  143C 0001                 28          move.b  #$01, D2        *on emet #$01 dans D2
+0000101C  1142 0002                 29          move.b D2, ora(A0)      *on charge D2 dans ORA
+00001020  117C 0000 0000            30          move.b #$00,irb(A0)     *on charge #$00 dans IRB
+00001026  0646 0100                 31          add #$100,D6            *on ajout 100 a D6 pour que la vitesse ne soit pas tres rapide au tout debut
+0000102A                            32          
+0000102A                            33          
+0000102A  BE7C 0080                 34  decale  cmp #$80,D7             *on compare le bit numero 7 au contenu de D7
+0000102E  6700 0012                 35          beq droite              *si c'est egale on execute le code de l'etiquette gauche
+00001032  E31A                      36          rol.b #1,D2             *sinon on fait un decalage de bit vers la droite
+00001034  6100 0010                 37  suite   bsr lecture
+00001038  6100 001E                 38          bsr affiche
+0000103C  60EC                      39          bra decale
+0000103E  6000 0030                 40          bra stop
+00001042                            41      
+00001042  E21A                      42  droite  ror.b #1,D2
+00001044  60EE                      43          bra suite
+00001046                            44  
+00001046                            45          
+00001046  1A28 0000                 46  lecture move.b irb(A0),D5
+0000104A  1C05                      47          move.b D5,D6
+0000104C  CC7C 0F7F                 48          and #$F7F,D6
+00001050  1E05                      49          move.b D5,D7
+00001052  CE7C 0080                 50          and #$80,D7
+00001056  4E75                      51          rts        
+00001058  1142 0002                 52  affiche move.b D2, ORA(A0) 
+0000105C                            53  
+0000105C                            54  
+0000105C                            55         
+0000105C  2606                      56  Tempo   move.l D6, D3
+0000105E  283C 00000FFF             57          move.l #$FFF, D4 
+00001064                            58           
+00001064  2803                      59  cycle1  move.l D3,D4  
+00001066  51CC FFFE                 60  cycle2  dbf D4, cycle2
+0000106A  51CB FFF8                 61          dbf D3, cycle1
+0000106E  4E75                      62          rts
+00001070                            63  
+00001070  303C 0009                 64  stop    move #9,D0
+00001074  4E4F                      65          trap #15
+00001076                            66      
+00001076                            67      
+00001076  FFFF FFFF                 68      SIMHALT             ; halt simulator
+0000107A                            69  
+0000107A                            70  * Put variables and constants here
+0000107A                            71  
+0000107A                            72      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AFFICHE             1058
+CYCLE1              1064
+CYCLE2              1066
+DDRA                6
+DDRB                4
+DECALE              102A
+DROITE              1042
+IRA                 2
+IRB                 0
+LECTURE             1046
+ORA                 2
+ORB                 0
+START               1000
+STOP                1070
+SUITE               1034
+TEMPO               105C
+VIA1                F0441

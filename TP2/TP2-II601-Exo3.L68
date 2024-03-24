@@ -1,0 +1,68 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/18/2024 10:46:39 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  EXO 3 TP 2
+00000000                             3  * Written by :  ERRARD - DACCACHE
+00000000                             4  * Date       :  13/03/24
+00000000                             5  * Description:  EXO 3
+00000000                             6  *-----------------------------------------------------------
+00001000                             7      ORG    $1000
+00001000                             8  START:                  ; first instruction of program
+00001000  =0000000D                  9  CR EQU $0D                  *retour chariot (carriage return)
+00001000  =0000000A                 10  LF EQU $0A                  *Saut de ligne (Line Feed)
+00001000                            11  * Put program code here
+00001000  43F9 00001058             12          LEA MESSAGE0, A1    *chargement de message dans l'adresse de registre A1
+00001006  103C 000E                 13          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000100A  4E4F                      14          TRAP #15            *Affiche le message  
+0000100C                            15  *-------------------------------------------    
+0000100C  43F9 00001071             16          LEA MESSAGE1, A1    *chargement de message dans l'adresse de registre A1
+00001012  103C 000E                 17          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+00001016  4E4F                      18          TRAP #15            *Affiche MESSAGE1  
+00001018  103C 0004                 19          MOVE.B #4,D0        *Mettre 4 dans le registre D0
+0000101C  4E4F                      20          TRAP #15            *demande a l'utilisateur d'insere un nombre  
+0000101E  83FC 0002                 21          DIVS #2,D1          *on divise le nombre contenu dans D1 par 2
+00001022  4841                      22          SWAP D1             *on echange les bites 1 a 4 avec les bites de 5 a 8 
+00001024  B27C 0000                 23          CMP #0,D1           *on compare 0 avec les bits du reste de la division effectue
+00001028  6700 0006                 24          BEQ PAIRE           *si le reste est egale a 0 on passe au code de l'etiquette paire (donc le nombre est paire)
+0000102C  6600 0014                 25          BNE IMPAIRE         *si le reste n'est pas egale a 0 on passe au code de l'etiquette impaire (donc le nombre est impaire)
+00001030  43F9 00001086             26  PAIRE   LEA MESSAGE2, A1    *chargement de message dans l'adresse de registre A1
+00001036  103C 000E                 27          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000103A  4E4F                      28          TRAP #15            *Affiche MESSAGE2  
+0000103C  103C 0009                 29          MOVE.B #9,D0        *Mettre 14 dans le registre D0
+00001040  4E4F                      30          TRAP #15            *arret du programme
+00001042                            31          
+00001042  43F9 0000109A             32  IMPAIRE LEA MESSAGE3, A1    *chargement de message dans l'adresse de registre A1
+00001048  103C 000E                 33          MOVE.B #14,D0       *Mettre 14 dans le registre D0
+0000104C  4E4F                      34          TRAP #15            *Affiche le message
+0000104E  103C 0009                 35          MOVE.B #9,D0        *Mettre 14 dans le registre D0
+00001052  4E4F                      36          TRAP #15            *arret du programme
+00001054                            37  
+00001054  FFFF FFFF                 38      SIMHALT             ; halt simulator
+00001058                            39  
+00001058                            40  * Put variables and constants here
+00001058= 2D 2D 2D 2D 2D 20 ...     41  MESSAGE0  DC.B '----- TP 2 EXO 3 -----',0,CR,LF
+00001071= 0D 0A 53 61 69 73 ...     42  MESSAGE1  DC.B CR,LF,'Saisir un nombre: ',0
+00001086= 4C 65 20 6E 6F 6D ...     43  MESSAGE2  DC.B 'Le nombre est pair!',0
+0000109A= 4C 65 20 6E 6F 6D ...     44  MESSAGE3  DC.B 'Le nombre est impaire!',0
+000010B1                            45  
+000010B1                            46  
+000010B1                            47      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+CR                  D
+IMPAIRE             1042
+LF                  A
+MESSAGE0            1058
+MESSAGE1            1071
+MESSAGE2            1086
+MESSAGE3            109A
+PAIRE               1030
+START               1000

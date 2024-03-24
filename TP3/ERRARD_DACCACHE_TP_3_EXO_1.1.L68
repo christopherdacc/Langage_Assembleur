@@ -1,0 +1,59 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/23/2024 6:52:50 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP3-EXO 1.1
+00000000                             3  * Written by :  ERRARD-DACCACHE
+00000000                             4  * Date       :  20/03/2024
+00000000                             5  * Description:  EXO 1.1
+00000000                             6  *-----------------------------------------------------------
+00000000                             7      *include c:\easy68K\equvia.X68
+00000000  =000F0441                  8  via1 equ $f0441                 *initialisaton des equivalences
+00000000  =00000002                  9  ora equ $2                      *output port A
+00000000  =00000002                 10  ira equ $2                      *input port A
+00000000  =00000006                 11  ddra equ $6                     *status des ports A0 a A7 (entree ou sortie)
+00000000                            12  
+00001000                            13      ORG    $1000
+00001000                            14    
+00001000                            15  START:                  ; first instruction of program
+00001000                            16  
+00001000                            17  * Put program code here
+00001000                            18  
+00001000  41F9 000F0441             19          lea via1,A0             *chargement de via1 dans l'adresse de registre A0
+00001006  117C 00FF 0006            20          move.b #$FF,ddra(A0)    *initialisation des port A en 
+0000100C  143C 0001                 21          move.b  #$01, D2 
+00001010  1142 0002                 22          move.b D2, ORA(A0)
+00001014  4241                      23          clr D1
+00001016                            24      
+00001016  E35A                      25  boucle  rol #1, D2
+00001018  1142 0002                 26          move.b D2, ORA(A0)
+0000101C  5241                      27          add #1,D1
+0000101E  B27C 0007                 28          cmp #7,D1
+00001022  6E00 0004                 29          bgt stop
+00001026  6DEE                      30          blt boucle
+00001028                            31          
+00001028  303C 0009                 32  stop    move #9,D0
+0000102C  4E4F                      33          trap #15
+0000102E                            34      
+0000102E                            35      
+0000102E  FFFF FFFF                 36      SIMHALT             ; halt simulator
+00001032                            37  
+00001032                            38  * Put variables and constants here
+00001032                            39  
+00001032                            40      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+BOUCLE              1016
+DDRA                6
+IRA                 2
+ORA                 2
+START               1000
+STOP                1028
+VIA1                F0441

@@ -1,0 +1,68 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/23/2024 7:24:40 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP3-EXO1.1
+00000000                             3  * Written by :  ERRARD-DACCACHE
+00000000                             4  * Date       :  20/03/2024
+00000000                             5  * Description:  EXO1.2
+00000000                             6  *-----------------------------------------------------------
+00000000                             7      *include c:\easy68K\equvia.X68
+00000000  =000F0441                  8  via1 equ $f0441                 *initialisaton des equivalences
+00000000  =00000002                  9  ora equ $2                      *output port A
+00000000  =00000002                 10  ira equ $2                      *input port A
+00000000  =00000006                 11  ddra equ $6                     *status des ports A0 a A7 (entree ou sortie)
+00000000                            12  
+00001000                            13      ORG    $1000
+00001000                            14    
+00001000                            15  START:                  ; first instruction of program
+00001000                            16  
+00001000                            17  * Put program code here
+00001000                            18  
+00001000  41F9 000F0441             19          lea via1,A0             *chargement de via1 dans l'adresse de registre A0
+00001006  117C 00FF 0006            20          move.b #$FF,ddra(A0)    *initialisation des port A en sortie (1111 1111)
+0000100C  143C 0001                 21          move.b  #$01, D2        *on met 01 en hex dans D2
+00001010  1142 0002                 22          move.b D2, ORA(A0)      *on affiche sur la pate A0 la valeur 1 (led allumé)
+00001014  4241                      23          clr D1                  *on effache le contenu de D1
+00001016                            24      
+00001016  E35A                      25  boucle  rol #1, D2              *on effectue une rotation de 1 bit a gauche pour passer de (0000 0001 à 0000 0010)
+00001018  6100 0008                 26          bsr affiche             *on execute le code de l'etiquette affiche
+0000101C  60F8                      27          bra boucle
+0000101E  6000 0012                 28          bra stop
+00001022                            29          
+00001022  1142 0002                 30  affiche move.b D2, ORA(A0) 
+00001026                            31         
+00001026  263C 000000EE             32  Tempo   move.l #$EE, D3
+0000102C                            33  
+0000102C  51CB FFFE                 34  cycle   dbf D3,cycle             
+00001030  4E75                      35          rts
+00001032                            36  
+00001032                            37          
+00001032  303C 0009                 38  stop    move #9,D0
+00001036  4E4F                      39          trap #15
+00001038                            40      
+00001038                            41      
+00001038  FFFF FFFF                 42      SIMHALT             ; halt simulator
+0000103C                            43  
+0000103C                            44  * Put variables and constants here
+0000103C                            45  
+0000103C                            46      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AFFICHE             1022
+BOUCLE              1016
+CYCLE               102C
+DDRA                6
+IRA                 2
+ORA                 2
+START               1000
+STOP                1032
+TEMPO               1026
+VIA1                F0441
