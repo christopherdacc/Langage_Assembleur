@@ -1,0 +1,91 @@
+000003E8 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 3/12/2024 1:43:43 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title : EXERCICE3
+00000000                             3  * Written by : EL ALAMI et VILELA
+00000000                             4  * Date : 27/02/2023
+00000000                             5  * Description: TP1
+00000000                             6  *-----------------------------------------------------------
+000003E8                             7  START: ORG 1000 ; first instruction of program
+000003E8                             8  * Put program code here
+000003E8                             9  
+000003E8  43F9 00000484             10  BOUCLE  LEA message1, A1    *Chargement du message1 dans A1
+000003EE  103C 000E                 11          move.b #14,D0       *on met 14 dans D0 pour afficher une chaine de caractere
+000003F2  4E4F                      12          TRAP #15            *Afficher le message1
+000003F4  43F9 000004A5             13          LEA message2,A1     *Chargement du message2 dans A1
+000003FA  4E4F                      14          TRAP #15            *Afficher le messaege2
+000003FC  103C 0004                 15          move.b #4,D0        *on met 4 dans D0 pour lire une entree du clavier apres la touche enter
+00000400  4E4F                      16          TRAP #15            *Lecture d'un entier
+00000402  B2BC 00000003             17          CMP.L #3,D1         *Comparaison de l'entier avec 3
+00000408  6E00 002C                 18          BGT SUP             *Si supérieur a 3, aller à l'étiquette SUP
+0000040C  B2BC 00000001             19          CMP.L #1,D1         *Comparaison de l'entier avec 1
+00000412  6D00 0030                 20          BLT INF             *Si inférieur a 1, aller à l'étiquette INF
+00000416  B2BC 00000001             21          CMP.L #1,D1         *Comparaison de l'entier avec 1
+0000041C  6700 0034                 22          BEQ UN              *Si égal à 1, aller à l'étiquette UN
+00000420  B2BC 00000002             23          CMP.L #2,D1         *Comparaison de l'entier avec 2
+00000426  6700 0038                 24          BEQ DEUX            *Si égal à 2, aller à l'étiquette DEUX
+0000042A  B2BC 00000003             25          CMP.L #3,D1         *Comparaison de l'entier avec 3
+00000430  6700 003E                 26          BEQ TROIS           *Si égal à 3, aller à l'étiquette TROIS
+00000434  60B2                      27          BRA BOUCLE          *et finalement aller a l'etiquette boucle pour reprendre le programme
+00000436  43F9 000004CF             28  SUP     LEA superieur,A1    *Charger le message "k trop grand" dans A1
+0000043C  103C 000E                 29          move.b #14,D0       *on met 14 dans D0 pour afficher une chaine de caractere
+00000440  4E4F                      30          TRAP #15            *Afficher le message "k trop grand"
+00000442  60A4                      31          BRA BOUCLE          *retour a l'etiquette BOUCLE
+00000444  43F9 000004DE             32  INF     LEA inferieur,A1    *Charger le message "k trop petit" dans A1
+0000044A  103C 000E                 33          move.b #14,D0       *on met 14 dans D0 pour afficher une chaine de caractere
+0000044E  4E4F                      34          TRAP #15            *Afficher le message "k trop petit"
+00000450  6096                      35          BRA BOUCLE          *retour a l'etiquette boucle
+00000452  43F9 000004ED             36  UN      LEA nombre_un,A1    *Chargement de la chaince de caractere nombre_un dans A11
+00000458  103C 000E                 37          move.b #14,D0       *on met 14 dans D0 pour afficher une chaine de caractere
+0000045C  4E4F                      38          TRAP #15            *Afficher le message "un"
+0000045E  6088                      39          BRA BOUCLE          *retour a l'etiquette boucle
+00000460  43F9 000004F4             40  DEUX    LEA nombre_deux,A1  *Chargement de la chaince de caractere nombre_deux dans A1
+00000466  103C 000E                 41          move.b #14,D0       *on met 14 dans D0 pour afficher une chaine de caractere
+0000046A  4E4F                      42          TRAP #15            *Afficher le message "deux"
+0000046C  6000 FF7A                 43          BRA BOUCLE          *retour a l'etiquette BOUCLE
+00000470  43F9 000004FB             44  TROIS   LEA nombre_trois,A1 *Chargement de la chaince de caractere nombre_trois dans A1
+00000476  103C 000E                 45          move.b #14,D0       *on met 14 dans D0 pour afficher une chaine de caractere
+0000047A  4E4F                      46          TRAP #15            *Afficher le message "trois"
+0000047C  6000 FF6A                 47          BRA BOUCLE          *retour a l'etiquette BOUCLE
+00000480                            48          
+00000480  FFFF FFFF                 49          SIMHALT             ; halt simulator
+00000484                            50          
+00000484                            51  * Put variables and constants here
+00000484  =0000000D                 52  CR EQU $0D
+00000484  =0000000A                 53  LF EQU $0A
+00000484= 0D 0A 2D 2D 2D 2D ...     54  message1 dc.b CR,LF,'--------- TP1 Exo3 ---------',CR,LF,0
+000004A5= 45 6E 74 72 65 72 ...     55  message2 dc.b 'Entrer la valeur de k entre un et trois: ',0
+000004CF= 0D 0A 6B 20 74 72 ...     56  superieur dc.b CR,LF,'k trop grand',0
+000004DE= 0D 0A 6B 20 74 72 ...     57  inferieur dc.b CR,LF,'k trop petit',0
+000004ED= 0D 0A 20 75 6E 20 00      58  nombre_un dc.b CR,LF,' un ',0
+000004F4= 0D 0A 64 65 75 78 00      59  nombre_deux dc.b CR,LF,'deux',0
+000004FB= 0D 0A 74 72 6F 69 ...     60  nombre_trois dc.b CR,LF,'trois',0
+00000503                            61  
+00000503                            62  
+00000503                            63      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+BOUCLE              3E8
+CR                  D
+DEUX                460
+INF                 444
+INFERIEUR           4DE
+LF                  A
+MESSAGE1            484
+MESSAGE2            4A5
+NOMBRE_DEUX         4F4
+NOMBRE_TROIS        4FB
+NOMBRE_UN           4ED
+START               3E8
+SUP                 436
+SUPERIEUR           4CF
+TROIS               470
+UN                  452

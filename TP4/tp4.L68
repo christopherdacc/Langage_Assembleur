@@ -1,0 +1,105 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 27/03/2024 15:58:03
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :
+00000000                             3  * Written by :
+00000000                             4  * Date       :
+00000000                             5  * Description:
+00000000                             6  *-----------------------------------------------------------
+00000000  =000F0441                  7  via1 equ $f0441                     *initialisaton des equivalences
+00000000  =00000002                  8  ora equ $2                          *output port A
+00000000  =00000002                  9  ira equ $2                          *input port A
+00000000  =00000018                 10  rpc equ $18                         *registre de controle des peripheriques
+00000000  =0000001A                 11  ifr equ $1A                         *registre d'interruption valide
+00000000  =0000001C                 12  ier equ $1C                         *registre d'indicateur d'interruption
+00000000  =00000014                 13  sr equ $14                          *registre d'etat
+00000000  =00000006                 14  ddra equ $6                         *status des ports A0 a A7 (entree ou sortie)
+00000000  =00000000                 15  orb equ $0
+00000000  =00000004                 16  ddrb equ $4
+00000000                            17      
+00001000                            18      ORG    $1000
+00001000                            19  START:                  ; first instruction of program
+00001000                            20  
+00001000                            21  * Put program code here
+00001000                            22          
+00001000  41F9 000F0441             23          lea via1,A0                 *chargement de via1 dans l'adresse de registre A0
+00001006  2239 00001074             24          move.l pin,D1
+0000100C  21FC 0000106E 0070        25          move.l #inter,$70           *on choisit l'adresse d'interuption (niveau 4)
+00001014  117C 0001 0018            26          move.b #$1,rpc(A0)          *on met a 1 le bit numero 0 de rpc qui correspond a un front montant sur CA1
+0000101A  117C 0082 001C            27          move.b #%10000010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruption sur CA1
+00001020  46FC 2300                 28          move.w #$2300,sr            *on met les 8 bits de gauche de SR a 0010 0011, pour changer le masque d'interruption a 3 et authorisé mode superviseur
+00001024  117C 0000 0006            29          move.b #$00,ddra(A0)        *on met les pates de A en mode Lecture (0F0443 pour l'affichage dans hardware)
+0000102A  4282                      30          clr.l D2
+0000102C  4283                      31          clr.l D3
+0000102E  4284                      32          clr.l D4
+00001030  3478 4000                 33          movea $4000,A2
+00001034                            34      
+00001034  1428 0002                 35  lecture move.b ira(A0),D2
+00001038  363C 0010                 36          move.w #%10000,D3
+0000103C  C642                      37          and D2,D3
+0000103E  B67C 0010                 38          cmp #%10000,D3
+00001042  6700 0004                 39          beq test1
+00001046  66EC                      40          bne lecture
+00001048                            41          
+00001048  1A28 0002                 42  test1   move.b ira(A0),D5
+0000104C  363C 0010                 43          move.w #%10000,D3
+00001050  C645                      44          and D5,D3
+00001052  B67C 0000                 45          cmp #$0,D3
+00001056  6700 0004                 46          beq suite1
+0000105A  66EC                      47          bne test1
+0000105C                            48          
+0000105C  363C 000F                 49  suite1  move.w #%01111,D3
+00001060  C443                      50          and D3,D2
+Line 51 ERROR: Invalid addressing mode
+00001062                            51          movem.b D2/D5,(A2)+
+00001062                            52          *add.w #$0F,D7
+00001062                            53          *add.w #$F0,D2
+00001062                            54          *and D2,D7
+00001062                            55          *rol.l #4,D7
+00001062  5244                      56          add #1,D4
+00001064  B87C 0003                 57          cmp #$3,D4
+00001068  6E00 0004                 58          bgt test2
+0000106C  6DC6                      59          blt lecture
+0000106E                            60          
+0000106E                            61  
+0000106E                            62  test2
+0000106E                            63  
+0000106E                            64  
+0000106E                            65  
+0000106E                            66  
+0000106E                            67  
+0000106E  4E73                      68  inter rte
+00001070                            69  
+00001070  FFFF FFFF                 70      SIMHALT             ; halt simulator
+00001074                            71  
+00001074                            72  * Put variables and constants here
+00001074= 06 09 01 02               73  pin dc.b 6,9,1,2
+00001078                            74  
+00001078                            75      END    START        ; last line of source
+
+1 error detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+DDRA                6
+DDRB                4
+IER                 1C
+IFR                 1A
+INTER               106E
+IRA                 2
+LECTURE             1034
+ORA                 2
+ORB                 0
+PIN                 1074
+RPC                 18
+SR                  14
+START               1000
+SUITE1              105C
+TEST1               1048
+TEST2               106E
+VIA1                F0441
