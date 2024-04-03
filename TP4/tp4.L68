@@ -1,6 +1,6 @@
 00001000 Starting Address
 Assembler used: EASy68K Editor/Assembler v5.16.01
-Created On: 27/03/2024 15:58:03
+Created On: 03/04/2024 15:55:39
 
 00000000                             1  *-----------------------------------------------------------
 00000000                             2  * Title      :
@@ -9,8 +9,8 @@ Created On: 27/03/2024 15:58:03
 00000000                             5  * Description:
 00000000                             6  *-----------------------------------------------------------
 00000000  =000F0441                  7  via1 equ $f0441                     *initialisaton des equivalences
-00000000  =00000002                  8  ora equ $2                          *output port A
-00000000  =00000002                  9  ira equ $2                          *input port A
+00000000  =0000001E                  8  ora equ $1E                          *output port A
+00000000  =0000001E                  9  ira equ $1E                          *input port A
 00000000  =00000018                 10  rpc equ $18                         *registre de controle des peripheriques
 00000000  =0000001A                 11  ifr equ $1A                         *registre d'interruption valide
 00000000  =0000001C                 12  ier equ $1C                         *registre d'indicateur d'interruption
@@ -25,81 +25,129 @@ Created On: 27/03/2024 15:58:03
 00001000                            21  * Put program code here
 00001000                            22          
 00001000  41F9 000F0441             23          lea via1,A0                 *chargement de via1 dans l'adresse de registre A0
-00001006  2239 00001074             24          move.l pin,D1
-0000100C  21FC 0000106E 0070        25          move.l #inter,$70           *on choisit l'adresse d'interuption (niveau 4)
-00001014  117C 0001 0018            26          move.b #$1,rpc(A0)          *on met a 1 le bit numero 0 de rpc qui correspond a un front montant sur CA1
-0000101A  117C 0082 001C            27          move.b #%10000010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruption sur CA1
+00001006  2239 000010EA             24          move.l pin,D1
+0000100C  21FC 000010E4 0070        25          move.l #inter,$70           *on choisit l'adresse d'interuption (niveau 4)
+00001014  117C 0011 0018            26          move.b #$11,rpc(A0)         *on met a 1 le bit numero 0 de rpc qui correspond a un front montant sur CA1
+0000101A  117C 0092 001C            27          move.b #%10010010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruption sur CA1
 00001020  46FC 2300                 28          move.w #$2300,sr            *on met les 8 bits de gauche de SR a 0010 0011, pour changer le masque d'interruption a 3 et authorisé mode superviseur
 00001024  117C 0000 0006            29          move.b #$00,ddra(A0)        *on met les pates de A en mode Lecture (0F0443 pour l'affichage dans hardware)
-0000102A  4282                      30          clr.l D2
-0000102C  4283                      31          clr.l D3
-0000102E  4284                      32          clr.l D4
-00001030  3478 4000                 33          movea $4000,A2
-00001034                            34      
-00001034  1428 0002                 35  lecture move.b ira(A0),D2
-00001038  363C 0010                 36          move.w #%10000,D3
-0000103C  C642                      37          and D2,D3
-0000103E  B67C 0010                 38          cmp #%10000,D3
-00001042  6700 0004                 39          beq test1
-00001046  66EC                      40          bne lecture
-00001048                            41          
-00001048  1A28 0002                 42  test1   move.b ira(A0),D5
-0000104C  363C 0010                 43          move.w #%10000,D3
-00001050  C645                      44          and D5,D3
-00001052  B67C 0000                 45          cmp #$0,D3
-00001056  6700 0004                 46          beq suite1
-0000105A  66EC                      47          bne test1
-0000105C                            48          
-0000105C  363C 000F                 49  suite1  move.w #%01111,D3
-00001060  C443                      50          and D3,D2
-Line 51 ERROR: Invalid addressing mode
-00001062                            51          movem.b D2/D5,(A2)+
-00001062                            52          *add.w #$0F,D7
-00001062                            53          *add.w #$F0,D2
-00001062                            54          *and D2,D7
-00001062                            55          *rol.l #4,D7
-00001062  5244                      56          add #1,D4
-00001064  B87C 0003                 57          cmp #$3,D4
-00001068  6E00 0004                 58          bgt test2
-0000106C  6DC6                      59          blt lecture
-0000106E                            60          
-0000106E                            61  
-0000106E                            62  test2
-0000106E                            63  
-0000106E                            64  
-0000106E                            65  
-0000106E                            66  
-0000106E                            67  
-0000106E  4E73                      68  inter rte
-00001070                            69  
-00001070  FFFF FFFF                 70      SIMHALT             ; halt simulator
-00001074                            71  
-00001074                            72  * Put variables and constants here
-00001074= 06 09 01 02               73  pin dc.b 6,9,1,2
-00001078                            74  
-00001078                            75      END    START        ; last line of source
+0000102A  117C 00FF 0004            30          move.b #$FF,ddrb(A0)        
+00001030  4282                      31          clr.l D2
+00001032  4283                      32          clr.l D3
+00001034  4284                      33          clr.l D4
+00001036  347C 4000                 34          movea #$4000,A2
+0000103A                            35          
+0000103A                            36      
+0000103A  1428 001E                 37  lecture move.b ira(A0),D2
+0000103E  363C 0010                 38          move.w #%10000,D3
+00001042  C642                      39          and D2,D3
+00001044  B67C 0010                 40          cmp #%10000,D3
+00001048  6700 0004                 41          beq test1
+0000104C  66EC                      42          bne lecture
+0000104E                            43          
+0000104E  1A28 001E                 44  test1   move.b ira(A0),D5
+00001052  363C 0010                 45          move.w #%10000,D3
+00001056  C645                      46          and D5,D3
+00001058  1145 0000                 47          move.b D5,orb(A0)
+0000105C  B67C 0000                 48          cmp #$0,D3
+00001060  6700 0004                 49          beq suite1
+00001064  66E8                      50          bne test1
+00001066                            51          
+00001066  363C 000F                 52  suite1  move.w #%01111,D3
+0000106A  C443                      53          and D3,D2                    *on retire le 1 qui est a coteu nombre entree
+0000106C  14C2                      54          move.b D2,(A2)+
+0000106E  5244                      55          add #1,D4
+00001070  B87C 0004                 56          cmp #$4,D4
+00001074  6E00 0004                 57          bgt test2
+00001078  6DC0                      58          blt lecture
+0000107A                            59          
+0000107A                            60  
+0000107A  4279 00E00000             61  test2   clr.w $E00000
+00001080  4279 00E00002             62          clr.w $E00002
+00001086  4279 00E00004             63          clr.w $E00004   
+0000108C  2C38 4000                 64          move.l $4000,D6
+00001090  BC41                      65          cmp D1,D6
+00001092                            66          
+00001092  6700 0006                 67          beq aff_oui
+00001096  6600 0024                 68          bne aff_hou
+0000109A                            69          
+0000109A  33F9 000010EE 00E00000    70  aff_oui move.w zero,$E00000
+000010A4  33F9 000010F8 00E00002    71          move.w let_U,$E00002
+000010AE  33F9 000010F7 00E00004    72          move.w neuf,$E00004
+000010B8  6100 0024                 73          bsr stop
+000010BC                            74  
+000010BC                            75  
+000010BC  33F9 000010FA 00E00000    76  aff_hou move.w let_H,$E00000
+000010C6  33F9 000010EE 00E00002    77          move.w zero,$E00002
+000010D0  33F9 000010F8 00E00004    78          move.w let_U,$E00004
+000010DA  6100 0002                 79          bsr stop
+000010DE                            80  
+000010DE  103C 0009                 81  stop    move.b #9,D0
+000010E2  4E4F                      82          TRAP #15
+000010E4                            83  
+000010E4                            84  
+000010E4                            85  
+000010E4  4E73                      86  inter rte
+000010E6                            87  
+000010E6  FFFF FFFF                 88      SIMHALT             ; halt simulator
+000010EA                            89  
+000010EA                            90  * Put variables and constants here
+000010EA= 06 09 01 02               91  pin     dc.b 6,9,1,2
+000010EE= 3F                        92  zero    dc.b  $3F
+000010EF= 06                        93  un      dc.b  $06           
+000010F0= 5B                        94  deux    dc.b  $5B           
+000010F1= 4F                        95  trois   dc.b  $4F           
+000010F2= 66                        96  quatre  dc.b  $66           
+000010F3= 6D                        97  cinque  dc.b  $6D           
+000010F4= 7D                        98  six     dc.b  $7D          
+000010F5= 07                        99  sept    dc.b  $07           
+000010F6= 7F                       100  huit    dc.b  $7F           
+000010F7= 6F                       101  neuf    dc.b  $6F 
+000010F8= 3E                       102  let_U   dc.b  $3E
+000010F9= 30                       103  zeros   dc.b  $30
+000010FA= 76                       104  let_H   dc.b  $76
+000010FB= 00                       105  off     dc.b  $00          
+000010FC                           106  
+000010FC                           107      END    START        ; last line of source
 
-1 error detected
+No errors detected
 No warnings generated
 
 
 SYMBOL TABLE INFORMATION
 Symbol-name         Value
 -------------------------
+AFF_HOU             10BC
+AFF_OUI             109A
+CINQUE              10F3
 DDRA                6
 DDRB                4
+DEUX                10F0
+HUIT                10F6
 IER                 1C
 IFR                 1A
-INTER               106E
-IRA                 2
-LECTURE             1034
-ORA                 2
+INTER               10E4
+IRA                 1E
+LECTURE             103A
+LET_H               10FA
+LET_U               10F8
+NEUF                10F7
+OFF                 10FB
+ORA                 1E
 ORB                 0
-PIN                 1074
+PIN                 10EA
+QUATRE              10F2
 RPC                 18
+SEPT                10F5
+SIX                 10F4
 SR                  14
 START               1000
-SUITE1              105C
-TEST1               1048
-TEST2               106E
+STOP                10DE
+SUITE1              1066
+TEST1               104E
+TEST2               107A
+TROIS               10F1
+UN                  10EF
 VIA1                F0441
+ZERO                10EE
+ZEROS               10F9
