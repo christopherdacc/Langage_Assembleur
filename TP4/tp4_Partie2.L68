@@ -1,0 +1,498 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 4/8/2024 7:32:23 PM
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP4
+00000000                             3  * Written by :  ERRARd et DACCACHE
+00000000                             4  * Date       :  03/04/2024
+00000000                             5  * Description:  TP4_demande_de_code
+00000000                             6  *-----------------------------------------------------------
+00000000  =000F0441                  7  via1 equ $f0441                     *initialisaton des equivalences
+00000000  =0000001E                  8  ora equ $1E                         *output port A
+00000000  =0000001E                  9  ira equ $1E                         *input port A
+00000000  =00000018                 10  rpc equ $18                         *registre de controle des peripheriques
+00000000  =0000001A                 11  ifr equ $1A                         *registre d'interruption valide
+00000000  =0000001C                 12  ier equ $1C                         *registre d'indicateur d'interruption
+00000000  =00000014                 13  sr equ $14                          *registre d'etat
+00000000  =00000006                 14  ddra equ $6                         *status des ports A0 a A7 (entree ou sortie)
+00000000  =00000000                 15  orb equ $0
+00000000  =00000004                 16  ddrb equ $4
+00000000  =00000014                 17  SR equ $14
+00000000  =0000001C                 18  ier equ $1C
+00000000  =0000001A                 19  ifr equ $1A
+00000000  =0000000D                 20  CR EQU $0D                          *retour chariot (carriage return)
+00000000  =0000000A                 21  LF EQU $0A                          *Saut de ligne (Line Feed)
+00000000                            22      
+00001000                            23      ORG    $1000
+00001000                            24  START:                  ; first instruction of program
+00001000                            25  
+00001000                            26  * Put program code here
+00001000                            27          
+00001000  41F9 000F0441             28          lea via1,A0                 *chargement de via1 dans l'adresse de registre A0
+00001006  21FC 0000156A 0070        29          move.l #inter1,$70           *on choisit l'adresse d'interuption (niveau 4)
+0000100E  117C 0011 0018            30          move.b #$11,rpc(A0)         *on met a 1 le bit numero 0 de rpc qui correspond a un front montant sur CA1
+00001014  117C 0092 001C            31          move.b #%10010010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruption sur CA1
+0000101A  46FC 2300                 32          move.w #$2300,sr            *on met les 8 bits de gauche de SR a 0010 0011, pour changer le masque d'interruption a 3 et authorisé mode superviseur
+0000101E  117C 0000 0006            33          move.b #$00,ddra(A0)        *on met les pates de A en mode Lecture (0F0443 pour l'affichage dans hardware)
+00001024  117C 00FF 0004            34          move.b #$FF,ddrb(A0)
+0000102A                            35          
+0000102A  227C 00004000             36          move.l #$4000,A1
+00001030  3C7C 4020                 37          move #$4020,A6
+00001034  4256                      38          clr.w (A6)
+00001036  387C 4010                 39          move #$4010,A4
+0000103A  367C 4038                 40          move #$4038,A3
+0000103E                            41  
+0000103E                            42  *-------Entree du mot de passe----------        
+0000103E  43F9 000015D6             43  code    lea MESSAGE1, A1     *chargement de message1 dans l'adresse de registre A1
+00001044  103C 000E                 44          move.b #14,D0        *mettre 14 dans le registre D0
+00001048  4E4F                      45          TRAP #15             *affiche du message1     
+0000104A  43F9 000015F2             46          lea MESSAGE2, A1     *chargement de message2 dans l'adresse de registre A1
+00001050  4E4F                      47          TRAP #15             *affichage du messsage2
+00001052                            48          
+00001052  103C 0004                 49          move.b #4,D0          *valeur du premier entier
+00001056  4E4F                      50          TRAP #15              *affichage
+00001058  3C3C 000A                 51          move.w #$A,D6          *déplacement de D1 dans l'adresse (indirect) contenue dans A3 (4030)
+0000105C  82C6                      52          divu D6,D1
+0000105E  2681                      53          move.l D1,(A3)
+00001060  11F8 4039 4033            54          move.b $4039,$4033
+00001066  4281                      55          clr.l D1
+00001068  3238 403A                 56          move.w $403A,D1
+0000106C  82C6                      57          divu D6,D1
+0000106E  4293                      58          clr.l (A3)
+00001070  2681                      59          move.l D1,(A3)
+00001072  11F8 4039 4032            60          move.b $4039,$4032
+00001078  4281                      61          clr.l D1
+0000107A  3238 403A                 62          move.w $403A,D1
+0000107E  82C6                      63          divu D6,D1
+00001080  4293                      64          clr.l (A3)
+00001082  2681                      65          move.l D1,(A3)
+00001084  11F8 4039 4031            66          move.b $4039,$4031
+0000108A  4281                      67          clr.l D1
+0000108C  3238 403A                 68          move.w $403A,D1
+00001090  82C6                      69          divu D6,D1
+00001092  4293                      70          clr.l (A3)
+00001094  2681                      71          move.l D1,(A3)
+00001096  11F8 4039 4030            72          move.b $4039,$4030
+0000109C  4293                      73          clr.l (A3)
+0000109E  367C 4030                 74          move #$4030,A3
+000010A2                            75          
+000010A2                            76          
+000010A2                            77          
+000010A2                            78          
+000010A2                            79          
+000010A2  247C 00004000             80  initi   move.l #$4000,A2
+000010A8  4292                      81          clr.l (A2)
+000010AA  4294                      82          clr.l (A4)
+000010AC  4280                      83          clr.l D0
+000010AE  4282                      84          clr.l D2
+000010B0  4283                      85          clr.l D3
+000010B2  4284                      86          clr.l D4
+000010B4  4285                      87          clr.l D5
+000010B6  4279 00E00000             88          clr.w $E00000
+000010BC  4279 00E00002             89          clr.w $E00002
+000010C2  4279 00E00004             90          clr.w $E00004
+000010C8  4279 00E00006             91          clr.w $E00006
+000010CE  4279 00E00008             92          clr.w $E00008
+000010D4  4279 00E0000A             93          clr.w $E0000A
+000010DA  4279 00E0000C             94          clr.w $E0000C
+000010E0  4279 00E0000E             95          clr.w $E0000E
+000010E6                            96          
+000010E6                            97      
+000010E6  1428 001E                 98  lecture move.b ira(A0),D2
+000010EA  363C 0010                 99          move.w #%10000,D3
+000010EE  C642                     100          and D2,D3
+000010F0  B67C 0010                101          cmp #%10000,D3
+000010F4  6700 0004                102          beq test1
+000010F8  66EC                     103          bne lecture
+000010FA                           104          
+000010FA  1A28 001E                105  test1   move.b ira(A0),D5
+000010FE  363C 0010                106          move.w #%10000,D3
+00001102  C645                     107          and D5,D3
+00001104  B67C 0000                108          cmp #$0,D3
+00001108  6700 0004                109          beq suite1
+0000110C  66EC                     110          bne test1
+0000110E                           111          
+0000110E  363C 000F                112  suite1  move.w #%01111,D3
+00001112  C443                     113          and D3,D2                    *on retire le 1 qui est a cote du nombre entree hex
+00001114  14C2                     114          move.b D2,(A2)+
+00001116  6000 007E                115          bra affichage
+0000111A  5244                     116  cont    add #1,D4
+0000111C  5254                     117          add #$1,(A4)
+0000111E  B87C 0004                118          cmp #$4,D4
+00001122  6E00 0004                119          bgt test2
+00001126  6DBE                     120          blt lecture
+00001128                           121          
+00001128                           122  
+00001128  227C 00004000            123  test2   move.l #$4000,A1
+0000112E  2213                     124          move.l (A3),D1
+00001130  B291                     125          cmp.l (A1),D1
+00001132  6700 0006                126          beq aff_oui
+00001136  6600 002A                127          bne aff_hou
+0000113A                           128          
+0000113A  13F9 000015C8 00E00000   129  aff_oui move.b zero,$E00000
+00001144  13F9 000015D2 00E00002   130          move.b let_U,$E00002
+0000114E  13F9 000015D3 00E00004   131          move.b let_I,$E00004
+00001158  117C 000F 0000           132          move.b #$F,orb(A0)
+0000115E  6100 045A                133          bsr stop
+00001162                           134  
+00001162                           135  
+00001162  13F9 000015D4 00E00000   136  aff_hou move.b let_H,$E00000
+0000116C  13F9 000015C8 00E00002   137          move.b zero,$E00002
+00001176  13F9 000015D2 00E00004   138          move.b let_U,$E00004
+00001180  117C 0000 0000           139          move.b #$0,orb(A0)
+00001186  5247                     140          add #$1,D7
+00001188  5256                     141          add #$1,(A6)
+0000118A                           142          
+0000118A  0C56 0003                143          cmp #$3,(A6)
+0000118E  6D00 FF12                144          blt initi
+00001192  6100 0426                145          bsr stop
+00001196                           146  *--------Affichage des nombres sur le LCD-------------
+00001196  B47C 0000                147  affichage   cmp #$0,D2
+0000119A  6700 004A                148              beq aff_zero
+0000119E  B47C 0001                149              cmp #$1,D2
+000011A2  6700 009C                150              beq aff_un
+000011A6  B47C 0002                151              cmp #$2,D2
+000011AA  6700 00EE                152              beq aff_deux
+000011AE  B47C 0003                153              cmp #$3,D2
+000011B2  6700 0140                154              beq aff_trois
+000011B6  B47C 0004                155              cmp #$4,D2
+000011BA  6700 0192                156              beq aff_quatre
+000011BE  B47C 0005                157              cmp #$5,D2
+000011C2  6700 01E4                158              beq aff_cinque
+000011C6  B47C 0006                159              cmp #$6,D2
+000011CA  6700 0236                160              beq aff_six
+000011CE  B47C 0007                161              cmp #$7,D2
+000011D2  6700 0288                162              beq aff_sept
+000011D6  B47C 0008                163              cmp #$8,D2
+000011DA  6700 02DA                164              beq aff_huit
+000011DE  B47C 0009                165              cmp #$9,D2
+000011E2  6700 032C                166              beq aff_neuf  
+000011E6                           167  *----Affiche 0-----------      
+000011E6  0C54 0000                168  aff_zero cmp #$0,(A4)
+000011EA  6700 001C                169           beq aff_pos10
+000011EE  0C54 0001                170           cmp #$1,(A4)
+000011F2  6700 0022                171           beq aff_pos20
+000011F6  0C54 0002                172           cmp #$2,(A4)
+000011FA  6700 0028                173           beq aff_pos30
+000011FE  0C54 0003                174           cmp #$3,(A4)
+00001202  6700 002E                175           beq aff_pos40
+00001206  4E75                     176           rts 
+00001208  13F9 000015C8 00E00008   177  aff_pos10 move.b zero,$E00008
+00001212  6000 FF06                178           bra cont
+00001216  13F9 000015C8 00E0000A   179  aff_pos20 move.b zero,$E0000A
+00001220  6000 FEF8                180           bra cont
+00001224  13F9 000015C8 00E0000C   181  aff_pos30 move.b zero,$E0000C
+0000122E  6000 FEEA                182           bra cont
+00001232  13F9 000015C8 00E0000E   183  aff_pos40 move.b zero,$E0000E
+0000123C  6000 FEDC                184           bra cont
+00001240                           185  *----Affiche 1-----------
+00001240  0C54 0000                186  aff_un  cmp #$0,(A4)
+00001244  6700 001C                187          beq aff_pos11
+00001248  0C54 0001                188          cmp #$1,(A4)
+0000124C  6700 0022                189          beq aff_pos21
+00001250  0C54 0002                190          cmp #$2,(A4)
+00001254  6700 0028                191          beq aff_pos31
+00001258  0C54 0003                192          cmp #$3,(A4)
+0000125C  6700 002E                193          beq aff_pos41
+00001260  4E75                     194          rts 
+00001262  13F9 000015C9 00E00008   195  aff_pos11 move.b un,$E00008
+0000126C  6000 FEAC                196           bra cont
+00001270  13F9 000015C9 00E0000A   197  aff_pos21 move.b un,$E0000A
+0000127A  6000 FE9E                198           bra cont
+0000127E  13F9 000015C9 00E0000C   199  aff_pos31 move.b un,$E0000C
+00001288  6000 FE90                200           bra cont
+0000128C  13F9 000015C9 00E0000E   201  aff_pos41 move.b un,$E0000E
+00001296  6000 FE82                202           bra cont
+0000129A                           203  *----Affiche 2-----------
+0000129A  0C54 0000                204  aff_deux cmp #$0,(A4)
+0000129E  6700 001C                205          beq aff_pos12
+000012A2  0C54 0001                206          cmp #$1,(A4)
+000012A6  6700 0022                207          beq aff_pos22
+000012AA  0C54 0002                208          cmp #$2,(A4)
+000012AE  6700 0028                209          beq aff_pos32
+000012B2  0C54 0003                210          cmp #$3,(A4)
+000012B6  6700 002E                211          beq aff_pos42
+000012BA  4E75                     212          rts 
+000012BC  13F9 000015CA 00E00008   213  aff_pos12 move.b deux,$E00008
+000012C6  6000 FE52                214           bra cont
+000012CA  13F9 000015CA 00E0000A   215  aff_pos22 move.b deux,$E0000A
+000012D4  6000 FE44                216           bra cont
+000012D8  13F9 000015CA 00E0000C   217  aff_pos32 move.b deux,$E0000C
+000012E2  6000 FE36                218           bra cont
+000012E6  13F9 000015CA 00E0000E   219  aff_pos42 move.b deux,$E0000E
+000012F0  6000 FE28                220           bra cont
+000012F4                           221  *----Affiche 3-----------
+000012F4  0C54 0000                222  aff_trois  cmp #$0,(A4)
+000012F8  6700 001C                223          beq aff_pos13
+000012FC  0C54 0001                224          cmp #$1,(A4)
+00001300  6700 0022                225          beq aff_pos23
+00001304  0C54 0002                226          cmp #$2,(A4)
+00001308  6700 0028                227          beq aff_pos33
+0000130C  0C54 0003                228          cmp #$3,(A4)
+00001310  6700 002E                229          beq aff_pos43
+00001314  4E75                     230          rts 
+00001316  13F9 000015CB 00E00008   231  aff_pos13 move.b trois,$E00008
+00001320  6000 FDF8                232           bra cont
+00001324  13F9 000015CB 00E0000A   233  aff_pos23 move.b trois,$E0000A
+0000132E  6000 FDEA                234           bra cont
+00001332  13F9 000015CB 00E0000C   235  aff_pos33 move.b trois,$E0000C
+0000133C  6000 FDDC                236           bra cont
+00001340  13F9 000015CB 00E0000E   237  aff_pos43 move.b trois,$E0000E
+0000134A  6000 FDCE                238           bra cont
+0000134E                           239  *----Affiche 4-----------
+0000134E  0C54 0000                240  aff_quatre  cmp #$0,(A4)
+00001352  6700 001C                241          beq aff_pos14
+00001356  0C54 0001                242          cmp #$1,(A4)
+0000135A  6700 0022                243          beq aff_pos24
+0000135E  0C54 0002                244          cmp #$2,(A4)
+00001362  6700 0028                245          beq aff_pos34
+00001366  0C54 0003                246          cmp #$3,(A4)
+0000136A  6700 002E                247          beq aff_pos44
+0000136E  4E75                     248          rts 
+00001370  13F9 000015CC 00E00008   249  aff_pos14 move.b quatre,$E00008
+0000137A  6000 FD9E                250           bra cont
+0000137E  13F9 000015CC 00E0000A   251  aff_pos24 move.b quatre,$E0000A
+00001388  6000 FD90                252           bra cont
+0000138C  13F9 000015CC 00E0000C   253  aff_pos34 move.b quatre,$E0000C
+00001396  6000 FD82                254           bra cont
+0000139A  13F9 000015CC 00E0000E   255  aff_pos44 move.b quatre,$E0000E
+000013A4  6000 FD74                256           bra cont
+000013A8                           257  *----Affiche 5-----------
+000013A8  0C54 0000                258  aff_cinque  cmp #$0,(A4)
+000013AC  6700 001C                259          beq aff_pos15
+000013B0  0C54 0001                260          cmp #$1,(A4)
+000013B4  6700 0022                261          beq aff_pos25
+000013B8  0C54 0002                262          cmp #$2,(A4)
+000013BC  6700 0028                263          beq aff_pos35
+000013C0  0C54 0003                264          cmp #$3,(A4)
+000013C4  6700 002E                265          beq aff_pos45
+000013C8  4E75                     266          rts 
+000013CA  13F9 000015CD 00E00008   267  aff_pos15 move.b cinque,$E00008
+000013D4  6000 FD44                268           bra cont
+000013D8  13F9 000015CD 00E0000A   269  aff_pos25 move.b cinque,$E0000A
+000013E2  6000 FD36                270           bra cont
+000013E6  13F9 000015CD 00E0000C   271  aff_pos35 move.b cinque,$E0000C
+000013F0  6000 FD28                272           bra cont
+000013F4  13F9 000015CD 00E0000E   273  aff_pos45 move.b cinque,$E0000E
+000013FE  6000 FD1A                274           bra cont
+00001402                           275  *----Affiche 6-----------
+00001402  0C54 0000                276  aff_six  cmp #$0,(A4)
+00001406  6700 001C                277          beq aff_pos16
+0000140A  0C54 0001                278          cmp #$1,(A4)
+0000140E  6700 0022                279          beq aff_pos26
+00001412  0C54 0002                280          cmp #$2,(A4)
+00001416  6700 0028                281          beq aff_pos36
+0000141A  0C54 0003                282          cmp #$3,(A4)
+0000141E  6700 002E                283          beq aff_pos46
+00001422  4E75                     284          rts 
+00001424  13F9 000015CE 00E00008   285  aff_pos16 move.b six,$E00008
+0000142E  6000 FCEA                286           bra cont
+00001432  13F9 000015CE 00E0000A   287  aff_pos26 move.b six,$E0000A
+0000143C  6000 FCDC                288           bra cont
+00001440  13F9 000015CE 00E0000C   289  aff_pos36 move.b six,$E0000C
+0000144A  6000 FCCE                290           bra cont
+0000144E  13F9 000015CE 00E0000E   291  aff_pos46 move.b six,$E0000E
+00001458  6000 FCC0                292           bra cont
+0000145C                           293  *----Affiche 7-----------
+0000145C  0C54 0000                294  aff_sept  cmp #$0,(A4)
+00001460  6700 001C                295          beq aff_pos17
+00001464  0C54 0001                296          cmp #$1,(A4)
+00001468  6700 0022                297          beq aff_pos27
+0000146C  0C54 0002                298          cmp #$2,(A4)
+00001470  6700 0028                299          beq aff_pos37
+00001474  0C54 0003                300          cmp #$3,(A4)
+00001478  6700 002E                301          beq aff_pos47
+0000147C  4E75                     302          rts 
+0000147E  13F9 000015CF 00E00008   303  aff_pos17 move.b sept,$E00008
+00001488  6000 FC90                304           bra cont
+0000148C  13F9 000015CF 00E0000A   305  aff_pos27 move.b sept,$E0000A
+00001496  6000 FC82                306           bra cont
+0000149A  13F9 000015CF 00E0000C   307  aff_pos37 move.b sept,$E0000C
+000014A4  6000 FC74                308           bra cont
+000014A8  13F9 000015CF 00E0000E   309  aff_pos47 move.b sept,$E0000E
+000014B2  6000 FC66                310           bra cont
+000014B6                           311  *----Affiche 8-----------
+000014B6  0C54 0000                312  aff_huit  cmp #$0,(A4)
+000014BA  6700 001C                313          beq aff_pos18
+000014BE  0C54 0001                314          cmp #$1,(A4)
+000014C2  6700 0022                315          beq aff_pos28
+000014C6  0C54 0002                316          cmp #$2,(A4)
+000014CA  6700 0028                317          beq aff_pos38
+000014CE  0C54 0003                318          cmp #$3,(A4)
+000014D2  6700 002E                319          beq aff_pos48
+000014D6  4E75                     320          rts 
+000014D8  13F9 000015D0 00E00008   321  aff_pos18 move.b huit,$E00008
+000014E2  6000 FC36                322           bra cont
+000014E6  13F9 000015D0 00E0000A   323  aff_pos28 move.b huit,$E0000A
+000014F0  6000 FC28                324           bra cont
+000014F4  13F9 000015D0 00E0000C   325  aff_pos38 move.b huit,$E0000C
+000014FE  6000 FC1A                326           bra cont
+00001502  13F9 000015D0 00E0000E   327  aff_pos48 move.b huit,$E0000E
+0000150C  6000 FC0C                328           bra cont
+00001510                           329  *----Affiche 9-----------
+00001510  0C54 0000                330  aff_neuf  cmp #$0,(A4)
+00001514  6700 001C                331          beq aff_pos19
+00001518  0C54 0001                332          cmp #$1,(A4)
+0000151C  6700 0022                333          beq aff_pos29
+00001520  0C54 0002                334          cmp #$2,(A4)
+00001524  6700 0028                335          beq aff_pos39
+00001528  0C54 0003                336          cmp #$3,(A4)
+0000152C  6700 002E                337          beq aff_pos49
+00001530  4E75                     338          rts 
+00001532  13F9 000015D1 00E00008   339  aff_pos19 move.b neuf,$E00008
+0000153C  6000 FBDC                340           bra cont
+00001540  13F9 000015D1 00E0000A   341  aff_pos29 move.b neuf,$E0000A
+0000154A  6000 FBCE                342           bra cont
+0000154E  13F9 000015D1 00E0000C   343  aff_pos39 move.b neuf,$E0000C
+00001558  6000 FBC0                344           bra cont
+0000155C  13F9 000015D1 00E0000E   345  aff_pos49 move.b neuf,$E0000E
+00001566  6000 FBB2                346           bra cont
+0000156A                           347  *--------Fin Affichage des nombres sur le LCD------------- 
+0000156A  247C 00004000            348  inter1  move.l #$4000,A2
+00001570  4291                     349          clr.l (A1)
+00001572  4292                     350          clr.l (A2)
+00001574  4294                     351          clr.l (A4)
+00001576  4296                     352          clr.l (A6)
+00001578  4280                     353          clr.l D0
+0000157A  4282                     354          clr.l D2
+0000157C  4283                     355          clr.l D3
+0000157E  4284                     356          clr.l D4
+00001580  4285                     357          clr.l D5
+00001582  4279 00E00000            358          clr.w $E00000
+00001588  4279 00E00002            359          clr.w $E00002
+0000158E  4279 00E00004            360          clr.w $E00004
+00001594  4279 00E00006            361          clr.w $E00006
+0000159A  4279 00E00008            362          clr.w $E00008
+000015A0  4279 00E0000A            363          clr.w $E0000A
+000015A6  4279 00E0000C            364          clr.w $E0000C
+000015AC  4279 00E0000E            365          clr.w $E0000E
+000015B2  08E8 0001 001A           366          bset #1,ifr(A0)
+000015B8  4E73                     367          rte
+000015BA                           368          
+000015BA  103C 0009                369  stop    move.b #9,D0
+000015BE  4E4F                     370          TRAP #15
+000015C0                           371          
+000015C0                           372  
+000015C0  FFFF FFFF                373      SIMHALT             ; halt simulator
+000015C4                           374  
+000015C4                           375  * Put variables and constants here
+000015C4= 06 09 01 02              376  pin     dc.b 6,9,1,2
+000015C8= 3F                       377  zero    dc.b  $3F
+000015C9= 06                       378  un      dc.b  $06           
+000015CA= 5B                       379  deux    dc.b  $5B           
+000015CB= 4F                       380  trois   dc.b  $4F           
+000015CC= 66                       381  quatre  dc.b  $66           
+000015CD= 6D                       382  cinque  dc.b  $6D           
+000015CE= 7D                       383  six     dc.b  $7D          
+000015CF= 07                       384  sept    dc.b  $07           
+000015D0= 7F                       385  huit    dc.b  $7F           
+000015D1= 6F                       386  neuf    dc.b  $6F 
+000015D2= 3E                       387  let_U   dc.b  $3E
+000015D3= 30                       388  let_I   dc.b  $30
+000015D4= 76                       389  let_H   dc.b  $76
+000015D5= 00                       390  off     dc.b  $00
+000015D6= 2D 2D 2D 2D 2D 20 ...    391  MESSAGE1  DC.B '----- TP4 Partie 2 ------',CR,LF,0
+000015F2= 45 6E 74 72 65 7A ...    392  MESSAGE2  DC.B 'Entrez le mot de passe : ',0
+0000160C                           393  
+0000160C                           394      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AFFICHAGE           1196
+AFF_CINQUE          13A8
+AFF_DEUX            129A
+AFF_HOU             1162
+AFF_HUIT            14B6
+AFF_NEUF            1510
+AFF_OUI             113A
+AFF_POS10           1208
+AFF_POS11           1262
+AFF_POS12           12BC
+AFF_POS13           1316
+AFF_POS14           1370
+AFF_POS15           13CA
+AFF_POS16           1424
+AFF_POS17           147E
+AFF_POS18           14D8
+AFF_POS19           1532
+AFF_POS20           1216
+AFF_POS21           1270
+AFF_POS22           12CA
+AFF_POS23           1324
+AFF_POS24           137E
+AFF_POS25           13D8
+AFF_POS26           1432
+AFF_POS27           148C
+AFF_POS28           14E6
+AFF_POS29           1540
+AFF_POS30           1224
+AFF_POS31           127E
+AFF_POS32           12D8
+AFF_POS33           1332
+AFF_POS34           138C
+AFF_POS35           13E6
+AFF_POS36           1440
+AFF_POS37           149A
+AFF_POS38           14F4
+AFF_POS39           154E
+AFF_POS40           1232
+AFF_POS41           128C
+AFF_POS42           12E6
+AFF_POS43           1340
+AFF_POS44           139A
+AFF_POS45           13F4
+AFF_POS46           144E
+AFF_POS47           14A8
+AFF_POS48           1502
+AFF_POS49           155C
+AFF_QUATRE          134E
+AFF_SEPT            145C
+AFF_SIX             1402
+AFF_TROIS           12F4
+AFF_UN              1240
+AFF_ZERO            11E6
+CINQUE              15CD
+CODE                103E
+CONT                111A
+CR                  D
+DDRA                6
+DDRB                4
+DEUX                15CA
+HUIT                15D0
+IER                 1C
+IFR                 1A
+INITI               10A2
+INTER1              156A
+IRA                 1E
+LECTURE             10E6
+LET_H               15D4
+LET_I               15D3
+LET_U               15D2
+LF                  A
+MESSAGE1            15D6
+MESSAGE2            15F2
+NEUF                15D1
+OFF                 15D5
+ORA                 1E
+ORB                 0
+PIN                 15C4
+QUATRE              15CC
+RPC                 18
+SEPT                15CF
+SIX                 15CE
+SR                  14
+START               1000
+STOP                15BA
+SUITE1              110E
+TEST1               10FA
+TEST2               1128
+TROIS               15CB
+UN                  15C9
+VIA1                F0441
+ZERO                15C8
