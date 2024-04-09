@@ -2,7 +2,7 @@
 * Title      :  TP4
 * Written by :  ERRARd et DACCACHE
 * Date       :  03/04/2024
-* Description:  TP4_demande_de_code
+* Description:  TP4_code_intégrer
 *-----------------------------------------------------------
 via1 equ $f0441                     *initialisaton des equivalences
 ora equ $1E                         *output port A
@@ -14,8 +14,6 @@ sr equ $14                          *registre d'etat
 ddra equ $6                         *status des ports A0 a A7 (entree ou sortie)
 orb equ $0                          *output port B
 ddrb equ $4                         *status des ports B0 a B7 (entree ou sortie)
-CR EQU $0D                          *retour chariot (carriage return)
-LF EQU $0A                          *Saut de ligne (Line Feed)
     
     ORG    $1000
 START:                  ; first instruction of program
@@ -23,9 +21,10 @@ START:                  ; first instruction of program
 * Put program code here
         
         lea via1,A0                 *chargement de via1 dans l'adresse de registre A0
-        move.l #inter1,$70           *on choisit l'adresse d'interuption (niveau 4)
+        move.l pin,D1               *on met le pin predeterminer dans D1
+        move.l #inter1,$70          *on choisit l'adresse d'interuption (niveau 4)
         move.b #$11,rpc(A0)         *on met a 1 le bit numero 0 de rpc qui correspond a un front montant sur CA1
-        move.b #%10010010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruption sur CA1
+        move.b #%10000010,ier(A0)   *on met ier a 1000 0010, pour authorise les interruption sur CA1
         move.w #$2300,sr            *on met les 8 bits de gauche de SR a 0010 0011, pour changer le masque d'interruption a 3 et authorisé mode superviseur
         move.b #$00,ddra(A0)        *on met les pates de A en mode Lecture (0F0443 pour l'affichage dans hardware)
         move.b #$FF,ddrb(A0)        *on met les pates de B en mode ecriture(0F0441 pour l'affichage dans hardware)
@@ -34,48 +33,7 @@ START:                  ; first instruction of program
         move #$4020,A6              *on met 4020 en hexa dans A6 (qui va pointer a l'adresse 4020 de la memoire, qui contient le nombre d'essai)
         clr.w (A6)                  *on efface le contenue de A6
         move #$4010,A4              *on met 4010 en hexa dans A4 (qui va pointer a l'adresse 4010 de la memoire, qui contient la position du numero a affiche)
-        move #$4038,A3              *on met 4038 en hexa dans A3 (qui va pointer a l'adresse 4038 de la memoire, contient la valeur du bon code en hex)
-
-*-------Entree du mot de passe----------        
-code    lea MESSAGE1, A1        *chargement de message1 dans l'adresse de registre A1
-        move.b #14,D0           *mettre 14 dans le registre D0
-        TRAP #15                *affiche du message1     
-        lea MESSAGE2, A1        *chargement de message2 dans l'adresse de registre A1
-        TRAP #15                *affichage du messsage2
         
-        move.b #4,D0            *demande d'entree du bon code
-        TRAP #15                *execution de la demande et attende de l'appui sur le bouton enter
-        move.w #$A,D6           *on met A(=10) en hex dans D6
-        divu D6,D1              *on divise le nombre entree par l'utilisateur par D6 (10)
-        move.l D1,(A3)          *on met met le resultat de la division (A3) adresse 4038
-        move.b $4039,$4033      *on met le contenue de l'adresse 3039 qui represante le reste de la division par 10, dans 4033
-        clr.l D1                *on efface le contenue de D1
-        move.w $403A,D1         *on met le resultat de la 1ere division par 10 dans D1
-        divu D6,D1              *on refait la division par 10 et on refait les etapes precedantes pour avoir dans l'adress 4030->4033
-        clr.l (A3)              *la conversion du code entree a un code hex qui represente les 4 chiffres dans une memoire
-        move.l D1,(A3)
-        move.b $4039,$4032
-        clr.l D1
-        move.w $403A,D1
-        divu D6,D1
-        clr.l (A3)
-        move.l D1,(A3)
-        move.b $4039,$4031
-        clr.l D1
-        move.w $403A,D1
-        divu D6,D1
-        clr.l (A3)
-        move.l D1,(A3)
-        move.b $4039,$4030
-        clr.l (A3)
-        move #$4030,A3
-*----------Fin de la conversion et sauvegarde du bon code dans l'adresse 4030->4033--------        
-        
-        
-        
-*-------Meme code que le programme 1 mais au lieu de comparer D1 a code entree sur le hardware
-*-------on compare la valeur sauvegarder dans (A3) pointeur a l'adrese 4030->4033 a la valeur entree
-*-------sur le hardware.         
 *-------init pour reinitialiser notre programme apres reset (interruption CA1)---------------------------        
 initi   move.l #$4000,A2            *on met 4000 en hexa dans A2 (qui va pointer a l'adresse 4000 de la memoire, qui nous permetra de post-incrementer)
         clr.l (A2)                  *on efface le contenu de l'adresse dont A2 est sont pointeur
@@ -93,7 +51,7 @@ initi   move.l #$4000,A2            *on met 4000 en hexa dans A2 (qui va pointer
         clr.w $E0000A               *on efface le contenu de l'adresse E0000A (position 6 de gauche)
         clr.w $E0000C               *on efface le contenu de l'adresse E0000C (position 7 de gauche)
         clr.w $E0000E               *on efface le contenu de l'adresse E0000E (position 8 de gauche)
-          
+        
 *-----lecture du nombre entree---------    
 lecture move.b ira(A0),D2           *on met le valeur entree dans D2
         move.w #%10000,D3           *on met 10000 en binaire dans D3
@@ -122,9 +80,7 @@ cont    add #1,D4                   *on incremente de 1 D4 (compteur du nombre e
         blt lecture                 *sinon on reprend le code de l'etiquette lecture pour entree le chiffre suivant jusqu'a se qu'on a saisi 4 chiffres
         
 *-----verification du code entree----------
-test2   move.l #$4000,A1            *on met 4000 en hex dans A1
-        move.l (A3),D1              *on met (A3) dans D1
-        cmp.l (A1),D1               *on compare le contenue de l'adresse dans A1 a D1
+test2   cmp.l (A1),D1               *on compare le contenue de l'adresse dans A1 a D1
         beq aff_oui                 *si elle est egale on passe au code de l'etiquette aff_oui pour afficher que le code est bon
         bne aff_hou                 *le code entree est faux on passe au code de l'etiquette aff_hou
         
@@ -139,7 +95,6 @@ aff_hou move.b let_H,$E00000        *on affiche H dans la premiere case de gauch
         move.b zero,$E00002         *on affiche 0 qui correspond a la lettre O dans la deuxieme case de gauche de l'afficheur
         move.b let_U,$E00004        *on affiche U dans la premiere case de gauche de l'afficheur
         move.b #$0,orb(A0)          *on eteint les led qui son sous l'afficheur pour indiquer que le code est faux
-        add #$1,D7                  *on incremente de 1 D7
         add #$1,(A6)                *on incremente de 1 le contenu de l'adresse contenu dans A6 (qui contient le nombre d'essai)
         
         cmp #$3,(A6)                *on compare le contenu de l'adresse contenu dans A6 a 3 
@@ -166,10 +121,10 @@ affichage   cmp #$0,D2              *on compare 0 a D2
             cmp #$8,D2
             beq aff_huit
             cmp #$9,D2
-            beq aff_neuf  
+            beq aff_neuf
 *----Fin boucle de comparaison et passage a l'etiquette d'affichage specifique au chiffre contenu dans D2------------------
 *----Debut Affichage et positionnement------------------
-*----Affiche 0-----------      
+*----Affiche 0------------------------------------------      
 aff_zero cmp #$0,(A4)               *on compare 0 au contenue de l'adresse mise dans A4
          beq aff_pos10              *si egale a 0 on affiche a la position 5 de gauche
          cmp #$1,(A4)               *on continue la comapraison jusqu'a 3 pour afficher les 4 chiffres a droite en passant aux
@@ -350,7 +305,7 @@ aff_pos39 move.b neuf,$E0000C
 aff_pos49 move.b neuf,$E0000E
          bra cont
 *----Fin Affichage et positionnement------------------ 
-*----Code le l'interruption sur front montant de CA1-------- 
+*----Code le l'interruption sur front montant de CA1--------
 inter1  move.l #$4000,A2
         clr.l (A1)
         clr.l (A2)
@@ -371,7 +326,8 @@ inter1  move.l #$4000,A2
         clr.w $E0000E
         bset #1,ifr(A0)
         rte
-*----Fin du Code le l'interruption sur front montant de CA1------        
+*----Fin du Code le l'interruption sur front montant de CA1------
+        
 stop    move.b #9,D0
         TRAP #15
         
@@ -393,11 +349,10 @@ neuf    dc.b  $6F
 let_U   dc.b  $3E
 let_I   dc.b  $30
 let_H   dc.b  $76
-off     dc.b  $00
-MESSAGE1  DC.B '----- TP4 Partie 2 ------',CR,LF,0
-MESSAGE2  DC.B 'Entrez le mot de passe : ',0
+off     dc.b  $00          
 
     END    START        ; last line of source
+
 *~Font name~Courier New~
 *~Font size~10~
 *~Tab type~1~
