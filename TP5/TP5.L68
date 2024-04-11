@@ -1,0 +1,183 @@
+00001000 Starting Address
+Assembler used: EASy68K Editor/Assembler v5.16.01
+Created On: 10/04/2024 14:17:57
+
+00000000                             1  *-----------------------------------------------------------
+00000000                             2  * Title      :  TP5
+00000000                             3  * Written by :  ERRARd et DACCACHE
+00000000                             4  * Date       :  03/04/2024
+00000000                             5  * Description:  TP5
+00000000                             6  *-----------------------------------------------------------
+00000000  =000F0441                  7  via1 equ $f0441                     *initialisaton des equivalences
+00000000  =0000001A                  8  ifr equ $1A                         *registre d'interruption valide
+00000000  =0000001C                  9  ier equ $1C                         *registre d'indicateur d'interruption
+00000000  =00000018                 10  pcr equ $18                         *registre de controle des peripheriques
+00000000  =00000014                 11  SR equ $14                          *registre d'etat
+00000000  =0000000D                 12  CR EQU $0D                          *retour chariot (carriage return)
+00000000  =0000000A                 13  LF EQU $0A                          *Saut de ligne (Line Feed)
+00000000                            14    
+00000000                            15    
+00001000                            16      ORG    $1000
+00001000                            17  START:                  ; first instruction of program
+00001000                            18  
+00001000                            19  * Put program code here
+00001000  207C 000F0441             20          move.l  #$F0441, A0
+00001006  21FC 00001168 0070        21          move.l #inter1,$70
+0000100E  117C 0001 0018            22          move.b #$01,pcr(A0)
+00001014  117C 0082 001C            23          move.b #$82,ier(A0)
+0000101A  46FC 2300                 24          move.w #$2300,SR
+0000101E                            25          
+0000101E                            26          
+0000101E                            27          
+0000101E                            28          
+0000101E  4279 00E00000             29  Debut   clr.w $E00000
+00001024  4279 00E00002             30          clr.w $E00002
+0000102A  4279 00E00004             31          clr.w $E00004
+00001030  4279 00E00006             32          clr.w $E00006
+00001036  4279 00E00008             33          clr.w $E00008
+0000103C  4279 00E0000A             34          clr.w $E0000A
+00001042  4279 00E0000C             35          clr.w $E0000C
+00001048  4279 00E0000E             36          clr.w $E0000E
+0000104E                            37          
+0000104E  43F9 00001186             38  Aff     lea message1,A1
+00001054  303C 000E                 39          move #14,D0
+00001058  4E4F                      40          TRAP #15
+0000105A  43F9 0000119E             41  suite   lea message2,A1
+00001060  303C 000E                 42          move #14,D0
+00001064  4E4F                      43          TRAP #15
+00001066  303C 0005                 44          move #5,D0
+0000106A  4E4F                      45          TRAP #15
+0000106C                            46          
+0000106C  B27C 0041                 47  suite1  cmp #$41,D1
+00001070  6700 0032                 48          beq ON
+00001074  B27C 0061                 49          cmp #$61,D1
+00001078  6700 002A                 50          beq ON
+0000107C                            51          
+0000107C  B27C 0045                 52  E       cmp #$45,D1
+00001080  6700 004E                 53          beq OFF
+00001084  B27C 0065                 54          cmp #$65,D1
+00001088  6700 0046                 55          beq OFF
+0000108C                            56          
+0000108C  B27C 0043                 57  C       cmp #$43,D1
+00001090  6700 0060                 58          beq FLIC
+00001094  B27C 0063                 59          cmp #$63,D1
+00001098  6700 0058                 60          beq FLIC
+0000109C  6600 009C                 61          bne ERR
+000010A0                            62          
+000010A0                            63          
+000010A0  6000 00DA                 64          bra end
+000010A4                            65          
+000010A4                            66  
+000010A4                            67  
+000010A4  13F9 0000120C 00E00004    68  ON      move.b let_I,$E00004
+000010AE  13F9 0000120D 00E00006    69          move.b let_E,$E00006
+000010B8  13F9 0000120E 00E00008    70          move.b let_S,$E00008
+000010C2  B27C 0041                 71          cmp #$41,D1
+000010C6  67DC                      72          beq ON
+000010C8  B27C 0061                 73          cmp #$61,D1
+000010CC  67D6                      74          beq ON
+000010CE  609C                      75          bra suite1
+000010D0                            76  
+000010D0  4239 00E00004             77  OFF     clr.b $E00004
+000010D6  4239 00E00006             78          clr.b $E00006
+000010DC  4239 00E00008             79          clr.b $E00008
+000010E2  B27C 0045                 80          cmp #$45,D1
+000010E6  67E8                      81          beq OFF
+000010E8  B27C 0065                 82          cmp #$65,D1
+000010EC  67E2                      83          beq OFF
+000010EE  6000 FF7C                 84          bra suite1
+000010F2                            85          
+000010F2                            86  
+000010F2  6100 0056                 87  FLIC    bsr timer
+000010F6  13F9 0000120C 00E00004    88          move.b let_I,$E00004
+00001100  13F9 0000120D 00E00006    89          move.b let_E,$E00006
+0000110A  13F9 0000120E 00E00008    90          move.b let_S,$E00008
+00001114  6100 0034                 91          bsr timer   
+00001118  42B9 00E00004             92          clr.l $E00004
+0000111E  4239 00E00006             93          clr.b $E00006
+00001124  4239 00E00008             94          clr.b $E00008
+0000112A  B27C 0043                 95          cmp #$43,D1
+0000112E  67C2                      96          beq FLIC
+00001130  B27C 0063                 97          cmp #$63,D1
+00001134  67BC                      98          beq FLIC
+00001136                            99          
+00001136  6000 FF34                100          bra suite1
+0000113A                           101          
+0000113A                           102  
+0000113A                           103  
+0000113A                           104  
+0000113A  43F9 000011E5            105  ERR     lea message3,A1
+00001140  303C 000E                106          move #14,D0
+00001144  4E4F                     107          TRAP #15
+00001146  6000 FF12                108          bra suite
+0000114A                           109          
+0000114A  143C 0032                110  timer   move.b #50,d2
+0000114E  263C 00000BB8            111  cycle1  move.l #3000,d3
+00001154  5343                     112  cycle2  sub #1,d3
+00001156  B6BC 00000000            113          cmp.l #0,d3 
+0000115C  6EF6                     114          bgt cycle2 
+0000115E  5302                     115          sub.b #1,d2 
+00001160  B43C 0000                116          cmp.b #0,d2 
+00001164  6EE8                     117          bgt cycle1 
+00001166  4E75                     118          rts
+00001168                           119          
+00001168  43F9 0000119E            120  inter1  lea message2,A1
+0000116E  303C 000E                121          move #14,D0
+00001172  4E4F                     122          TRAP #15
+00001174  303C 0005                123          move #5,D0
+00001178  4E4F                     124          TRAP #15
+0000117A  4E73                     125          rte
+0000117C                           126  
+0000117C  303C 0009                127  end     move #9,D0
+00001180  4E4F                     128          TRAP #15
+00001182                           129  
+00001182  FFFF FFFF                130      SIMHALT             ; halt simulator
+00001186                           131  
+00001186                           132  * Put variables and constants here
+00001186= 2D 2D 2D 2D 2D 2D ...    133  message1 dc.b '--------- TP5 ---------',0
+0000119E= 0D 0A 45 6E 74 72 ...    134  message2 dc.b CR,LF,'Entrer "A" pour allumer, "E" pour eteindre et "C" pour clignoter: ',0
+000011E3= 0D 0A                    135  retligne dc.b CR,LF
+000011E5= 0D 0A 45 6E 74 72 ...    136  message3 dc.b CR,LF,'Entrez "A", "E" ou "C" seulement!!',CR,LF,0
+0000120C= 30                       137  let_I   dc.b  $30
+0000120D= 79                       138  let_E   dc.b  $79
+0000120E= 6D                       139  let_S   dc.b  $6D
+0000120F                           140  
+0000120F                           141      END    START        ; last line of source
+
+No errors detected
+No warnings generated
+
+
+SYMBOL TABLE INFORMATION
+Symbol-name         Value
+-------------------------
+AFF                 104E
+C                   108C
+CR                  D
+CYCLE1              114E
+CYCLE2              1154
+DEBUT               101E
+E                   107C
+END                 117C
+ERR                 113A
+FLIC                10F2
+IER                 1C
+IFR                 1A
+INTER1              1168
+LET_E               120D
+LET_I               120C
+LET_S               120E
+LF                  A
+MESSAGE1            1186
+MESSAGE2            119E
+MESSAGE3            11E5
+OFF                 10D0
+ON                  10A4
+PCR                 18
+RETLIGNE            11E3
+SR                  14
+START               1000
+SUITE               105A
+SUITE1              106C
+TIMER               114A
+VIA1                F0441
